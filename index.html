@@ -144,6 +144,8 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif}
 @media(max-width:1100px){.rpos-body{grid-template-columns:minmax(0,1fr) 320px!important}.rpos-cats{grid-template-columns:repeat(4,minmax(80px,1fr))}}
 @media(max-width:800px){.rpos-body{grid-template-columns:1fr!important}.rpos-menu,.rpos-order{grid-column:1}.rpos-order{order:2}.rpos-cats{grid-template-columns:repeat(3,minmax(75px,1fr))}}
 
+
+.auth-file{cursor:pointer;position:relative;transition:.15s ease}.auth-file:hover{border-color:#e0a800;background:#fffaf0}.logo-preview{margin-top:10px;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap}.logo-preview img{width:72px;height:72px;object-fit:contain;border:1px solid #ddd;border-radius:12px;background:#fff;padding:5px}.logo-remove{font-size:12px;padding:7px 10px}
 </style>
 </head>
 <body>
@@ -194,7 +196,7 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif}
       <div class="section-bar">🏪 Business Information</div>
       <div class="auth-grid">
        <div class="auth-field"><label>Business Name *</label><input name="businessName" required maxlength="120" placeholder="Enter your restaurant name"></div>
-       <div class="auth-field"><label>Business Logo</label><div class="auth-file">🖼️ &nbsp; Upload Logo<br><small>PNG, JPG (Max 2MB)</small><input name="logo" type="file" accept="image/*" style="display:none"></div></div>
+       <div class="auth-field"><label>Business Logo</label><div class="auth-file" id="logoUploadBox" role="button" tabindex="0" aria-label="Upload business logo">🖼️ &nbsp; <span id="logoUploadText">Upload Logo</span><br><small>PNG, JPG (Max 2MB)</small><input id="businessLogoInput" name="logo" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" style="display:none"><div id="logoPreview" class="logo-preview hidden"></div></div></div>
        <div class="auth-field"><label>Owner Name *</label><input name="ownerName" required maxlength="120" placeholder="Enter owner name"></div>
        <div class="auth-field"><label>Address</label><input name="address" placeholder="Enter your address"></div>
        <div class="auth-field"><label>Phone Number *</label><input name="phone" type="tel" required placeholder="+251 9XX XXX XXX"></div>
@@ -240,7 +242,8 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif}
  </main>
 </div>
 <div id="modalRoot"></div><div id="toastRoot"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">document.addEventListener('DOMContentLoaded',initBusinessLogoUpload);
+</script>
 <script>
 const SUPABASE_URL="https://rkdowbgbwsyhmlzfiynl.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_RguZsGx7_dt-p3vvZ3BZbA_U563nFWp";
@@ -342,8 +345,31 @@ function confirmText(message){
  const key=lang==='Afaan Oromoo'||lang==='Afaan Oromo'?'om':lang==='العربية'?'ar':'en';return m[key];
 }
 function appConfirm(message){return new Promise(resolve=>{const yes=lang==='Afaan Oromoo'||lang==='Afaan Oromo'?'Eeyyee':lang==='العربية'?'نعم':'OK';const no=lang==='Afaan Oromoo'||lang==='Afaan Oromo'?'Lakki':lang==='العربية'?'إلغاء':'Cancel';const rtl=lang==='العربية'?' dir="rtl"':'';$('modalRoot').innerHTML=`<div class="modalback"${rtl}><div class="modal" role="dialog" aria-modal="true"><div class="modalhead"><h2>${lang==='العربية'?'تأكيد':lang==='Afaan Oromoo'||lang==='Afaan Oromo'?'Mirkaneessi':'Confirm'}</h2><button class="light" type="button" id="confirmClose">✕</button></div><p>${confirmText(message)}</p><div class="row" style="justify-content:flex-end"><button class="light" type="button" id="confirmNo">${no}</button><button class="gold" type="button" id="confirmYes">${yes}</button></div></div></div>`;const finish=v=>{$('modalRoot').innerHTML='';resolve(v)};$('confirmClose').onclick=()=>finish(false);$('confirmNo').onclick=()=>finish(false);$('confirmYes').onclick=()=>finish(true);});}
-function showRegister(){$('loginPanel').classList.add('hidden');$('registerPanel').classList.remove('hidden')}
+function showRegister(){$('loginPanel').classList.add('hidden');$('registerPanel').classList.remove('hidden');initBusinessLogoUpload()}
 function showLogin(){$('registerPanel').classList.add('hidden');$('loginPanel').classList.remove('hidden')}
+function initBusinessLogoUpload(){
+ const box=$('logoUploadBox'),input=$('businessLogoInput');
+ if(!box||!input||box.dataset.ready==='1')return;
+ box.dataset.ready='1';
+ const open=()=>input.click();
+ box.addEventListener('click',e=>{if(e.target!==input)open()});
+ box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+ input.addEventListener('change',()=>{
+   const file=input.files&&input.files[0];
+   if(!file)return;
+   if(file.size>2*1024*1024){toast('Logo must be 2MB or smaller.');input.value='';return;}
+   if(!/^image\/(png|jpeg|jpg|webp)$/.test(file.type)){toast('Please choose a PNG, JPG or WEBP image.');input.value='';return;}
+   const reader=new FileReader();
+   reader.onload=()=>{
+     const preview=$('logoPreview');
+     preview.classList.remove('hidden');
+     preview.innerHTML=`<img src="${reader.result}" alt="Business logo preview"><button type="button" class="light logo-remove" aria-label="Remove logo">Remove</button>`;
+     $('logoUploadText').textContent='Change Logo';
+     preview.querySelector('.logo-remove').onclick=(ev)=>{ev.stopPropagation();input.value='';preview.classList.add('hidden');preview.innerHTML='';$('logoUploadText').textContent='Upload Logo';};
+   };
+   reader.readAsDataURL(file);
+ });
+}
 async function submitRegistration(e){
  e.preventDefault();const form=e.target,btn=form.querySelector('button[type=submit]'),f=new FormData(form);
  const p=String(f.get('password')||''), cp=String(f.get('confirmPassword')||'');
