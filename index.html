@@ -330,6 +330,69 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif}
 }
 
 </style>
+
+<style id="wizo-desktop-fit-fix">
+/* WIZO Restaurant POS — desktop screen fit: keep the whole POS on one screen */
+@media (min-width: 901px){
+  html,body{height:100%;}
+  body{overflow:hidden;}
+  .app{height:100vh;min-height:0;overflow:hidden;}
+  .side{width:214px;padding:12px 10px;gap:10px;box-sizing:border-box;overflow:hidden;}
+  .brand{padding:2px 6px 10px;gap:8px;}
+  .brand .logo{width:36px;height:36px;font-size:15px;border-radius:10px;}
+  .brand b{font-size:16px;}
+  .brand small{font-size:9px;}
+  .nav{gap:2px;}
+  .nav button{padding:8px 9px;font-size:12px;line-height:1.15;}
+  .sidefoot{font-size:9px;padding:4px;}
+  .main{height:100vh;min-height:0;overflow:hidden;}
+  .top{height:48px;min-height:48px;padding:0 14px;box-sizing:border-box;}
+  .top .right{gap:6px;}
+  .pill{padding:5px 8px;font-size:10px;}
+  .content{height:calc(100vh - 48px);box-sizing:border-box;padding:10px 12px;max-width:none;overflow:hidden;}
+
+  /* POS panel */
+  .rpos{height:calc(100vh - 68px);box-sizing:border-box;padding:9px;border-radius:12px;display:flex;flex-direction:column;overflow:hidden;}
+  .rpos-top{gap:8px;margin-bottom:7px;flex:0 0 auto;}
+  .rpos-brand{gap:7px;}
+  .rpos-logo{width:34px;height:34px;font-size:15px;border-radius:9px;}
+  .rpos-brand b{font-size:15px;}
+  .rpos-brand small{font-size:9px;}
+  .rpos-modes{gap:5px;margin-top:6px!important;}
+  .rpos-mode{min-width:92px;padding:7px 9px;border-radius:7px;font-size:11px;}
+  .rpos-mode small{font-size:9px;}
+  .rpos-tools{gap:5px;}
+  .rpos-tools select,.rpos-tools input{padding:7px 8px;font-size:11px;}
+
+  .rpos-body{grid-template-columns:300px minmax(0,1fr);gap:8px;min-height:0;flex:1;overflow:hidden;}
+  .rpos-order{border-radius:9px;min-height:0;}
+  .rpos-order-head{padding:8px 9px;gap:5px;font-size:11px;}
+  .rpos-order-head select{padding:5px;}
+  .rpos-lines{padding:2px 7px;min-height:0;}
+  .rpos-line{grid-template-columns:1fr 62px 70px 24px;gap:5px;padding:7px 3px;font-size:11px;}
+  .rpos-controls{padding:7px;}
+  .rpos-controls .field{margin:0 0 5px!important;gap:3px;}
+  .rpos-controls .field input{padding:6px 7px;font-size:11px;}
+  .rpos-qty button{padding:5px 8px;}
+  .rpos-total{margin-top:6px;padding:8px;border-radius:7px;font-size:12px;}
+
+  .rpos-menu{min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+  .rpos-menu .toolbar{margin-bottom:6px!important;gap:5px;flex:0 0 auto;}
+  .rpos-menu .toolbar input{min-width:0!important;padding:7px 8px;font-size:11px;}
+  .rpos-menu .toolbar button{padding:7px 9px;font-size:11px;}
+  .rpos-cats{gap:5px;flex:0 0 auto;}
+  .rpos-cats button{padding:6px 9px;font-size:10px;}
+  .rpos-items{grid-template-columns:repeat(4,minmax(90px,1fr));gap:6px;overflow:auto;min-height:0;padding-right:2px;align-content:start;}
+  .rpos-item{min-height:82px;padding:6px;border-radius:7px;}
+  .rpos-item .ico{font-size:25px;margin-bottom:2px;}
+  .rpos-item b{font-size:11px;}
+  .rpos-item strong{font-size:10px;margin-top:2px;}
+
+  .rpos-bottom{grid-template-columns:repeat(7,minmax(48px,1fr)) 1.15fr 1.15fr 1.15fr;gap:5px;margin-top:7px;flex:0 0 auto;}
+  .rpos-bottom button{padding:6px 4px;font-size:10px;line-height:1.1;border-radius:7px;}
+  .rpos-bottom .pay{font-size:13px;}
+}
+</style>
 </head>
 <body>
 <div id="login" class="login auth-reference">
