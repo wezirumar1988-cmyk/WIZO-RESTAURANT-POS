@@ -68,158 +68,55 @@ body{background:linear-gradient(180deg,#f6f7f8 0%,#eef0f2 100%)}
 
 /* WIZO Restaurant POS — menu photos, categories and responsive food cards */
 .menu-table-photo{width:44px;height:44px;border-radius:10px;object-fit:cover;border:1px solid #e4e7eb;display:block}.menu-table-placeholder{display:inline-flex;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;background:#f4f5f7;font-size:20px}.menu-category-tag{display:inline-flex;padding:4px 9px;border-radius:999px;background:#fff6d6;color:#9a7200;font-size:12px;font-weight:700}.menu-photo-preview{display:flex;align-items:center;gap:10px;margin-top:8px}.menu-photo-preview img{width:70px;height:70px;object-fit:cover;border-radius:12px;border:1px solid #ddd}.rpos-food-card{position:relative;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:7px;min-height:150px;padding:9px!important;text-align:left!important;overflow:hidden}.rpos-food-image{display:flex;width:100%;height:82px;border-radius:10px;overflow:hidden;align-items:center;justify-content:center;background:#202428}.rpos-food-image img{width:100%;height:100%;object-fit:cover}.rpos-food-image .ico{font-size:30px}.rpos-food-name{display:flex;flex-direction:column;gap:2px;min-width:0}.rpos-food-name b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rpos-food-name small{font-size:10px;opacity:.7}.rpos-food-card>strong{color:#e9b928;font-size:13px;margin-top:auto}.rpos-items{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))!important}@media(max-width:700px){.rpos-items{grid-template-columns:repeat(2,minmax(0,1fr))!important}.rpos-food-card{min-height:132px}.rpos-food-image{height:68px}.menu-photo-preview{flex-wrap:wrap}}
-
-/* ===== WIZO POS REFERENCE DESIGN ===== */
-:root{
-  --wizo-blue:#0878f9; --wizo-green:#20b54b; --wizo-gold:#e8ad16;
-  --wizo-navy:#07101d; --wizo-soft:#f4f7fb;
-}
-body{font-family:Inter,Segoe UI,Arial,sans-serif}
-.wizo-logo-mark{
-  width:58px;height:58px;border-radius:18px;display:grid;place-items:center;
-  font-weight:1000;font-size:34px;font-style:italic;color:#fff;
-  background:linear-gradient(135deg,#0b82ff 0 52%,#1db64c 53% 100%);
-  box-shadow:0 10px 25px #0004;position:relative
-}
-.wizo-logo-mark:after{
-  content:"✓";position:absolute;right:-4px;top:-8px;width:22px;height:22px;
-  border-radius:7px;background:#fff;color:#19aa48;font-size:15px;font-style:normal;
-  display:grid;place-items:center;box-shadow:0 4px 10px #0003
-}
-.wizo-wordmark{font-weight:1000;font-size:30px;letter-spacing:-1.5px;line-height:1}
-.wizo-wordmark .blue{color:var(--wizo-blue)} .wizo-wordmark .green{color:var(--wizo-green)}
-.wizo-tagline{color:#fff;font-size:13px;letter-spacing:.2px;margin-top:7px}
-.wizo-tagline b{color:#f4c33b}
-.wizo-left{
-  min-height:100%;display:flex;flex-direction:column;justify-content:center;
-  padding:42px 34px;background:
-  radial-gradient(circle at 15% 15%,#0b6cf433,transparent 30%),
-  radial-gradient(circle at 85% 75%,#21b94b33,transparent 30%),
-  linear-gradient(145deg,#06101c,#101820 55%,#06100e);color:#fff;position:relative;overflow:hidden
-}
-.wizo-left:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,#0008);pointer-events:none}
-.wizo-left>*{position:relative;z-index:1}
-.wizo-food{font-size:72px;letter-spacing:8px;margin:30px 0 12px;filter:drop-shadow(0 14px 20px #0008)}
-.wizo-features{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
-.wizo-feature{border:1px solid #e8ad164d;border-radius:16px;padding:13px 8px;text-align:center;background:#0004}
-.wizo-feature b{display:block;font-size:24px;color:#f2bf35}.wizo-feature span{font-size:11px}
-.auth-reference{min-height:100vh;display:grid;grid-template-columns:52% 48%;background:#fff}
-.auth-reference .auth-panel{display:flex;align-items:center;justify-content:center;padding:24px;background:#f8fafc}
-.auth-card-reference{width:min(680px,100%);background:#fff;border-radius:24px;padding:30px;box-shadow:0 20px 70px #07101d18;border:1px solid #edf0f4}
-.auth-top{display:flex;justify-content:flex-end;gap:5px}.lang-btn{border:0!important;border-radius:14px!important;padding:10px 15px!important;background:#eef1f5!important;color:#17202a!important}.lang-btn.active{background:var(--wizo-blue)!important;color:#fff!important}
-.auth-title{text-align:center;font-size:34px;color:#0b1730;margin:4px 0 5px}.auth-sub{text-align:center;color:#687181;margin:0 0 20px}
-.section-bar{padding:12px 15px;border-radius:12px;background:#eef6ff;color:#0b1730;font-weight:800;margin:16px 0 12px}
-.section-bar.green{background:#effaf2}.auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px}
-.auth-field{margin:7px 0}.auth-field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.auth-field input,.auth-field select{width:100%;height:48px;border:1px solid #dce2e9;border-radius:10px;padding:0 13px;background:#fff}
-.auth-file{height:82px;border:2px dashed #cfd7e2;border-radius:12px;display:grid;place-items:center;color:#657083;text-align:center}
-.auth-primary{width:100%;height:52px!important;border-radius:12px!important;background:linear-gradient(90deg,#e8aa12,#f0bd2b)!important;color:#171717!important;font-size:17px!important}
-.auth-signin{width:100%;height:54px!important;border-radius:12px!important;background:var(--wizo-blue)!important;color:#fff!important;font-size:18px!important}
-.auth-secondary{width:100%;height:52px!important;border-radius:12px!important;background:#f1f3f6!important;color:#111827!important;font-size:16px!important}
-.auth-links{display:flex;justify-content:space-between;align-items:center;margin:10px 0 15px}.auth-links a{color:#066fe9;font-weight:700;text-decoration:none}
-.auth-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0 6px}.auth-logo .wizo-wordmark{font-size:38px}
-@media(max-width:900px){.auth-reference{grid-template-columns:1fr}.wizo-left{display:none}.auth-panel{min-height:100vh}.auth-grid{grid-template-columns:1fr}}
-/* POS screen: menu center + order/cart right, like reference image */
-.rpos{background:#fff!important;color:#17202a!important;border:0!important;box-shadow:none!important;max-width:none!important;padding:0!important}
-.rpos-top{background:#fff;border-bottom:1px solid #e8ebef;padding:8px 0 12px}
-.rpos-brand .rpos-logo{background:linear-gradient(135deg,var(--wizo-blue),var(--wizo-green));border:0;color:#fff}
-.rpos-brand b{color:#0b1730}.rpos-brand small{color:#758094}
-.rpos-modes{display:flex;gap:8px}.rpos-mode{background:#f4f6f8;color:#17202a;border:1px solid #e1e5ea}.rpos-mode.active{background:var(--wizo-blue);color:#fff;border-color:var(--wizo-blue)}
-.rpos-tools input,.rpos-tools select{background:#fff;color:#17202a;border:1px solid #dce2e9}
-.rpos-body{grid-template-columns:minmax(0,1fr) 360px!important;background:#f5f7fa;min-height:650px}
-.rpos-menu{grid-column:1;background:#fff;border-radius:0;padding:14px;overflow:auto}
-.rpos-order{grid-column:2;background:#fff;border-left:1px solid #e2e6eb;border-radius:0}
-.rpos-cats{grid-template-columns:repeat(7,minmax(90px,1fr));gap:8px}
-.rpos-cat{background:#fff;color:#17202a;border:1px solid #e2e6eb}.rpos-cat.active{background:var(--wizo-blue);color:#fff;border-color:var(--wizo-blue);box-shadow:none}
-.rpos-items{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important;gap:10px}
-.rpos-food-card{background:#fff!important;color:#17202a!important;border:1px solid #e2e6eb!important;box-shadow:0 5px 16px #1020300b}
-.rpos-food-card:hover{border-color:#0b78f5!important;transform:translateY(-2px)}
-.rpos-food-card>strong{color:#0878f9}
-.rpos-order-head{background:#fff}.rpos-order-head button.light{background:#eef2f6}
-.rpos-lines{background:#fff}.rpos-line{grid-template-columns:1fr 62px 72px 28px}
-.rpos-qty button{background:#eef2f6;color:#17202a}
-.rpos-total{background:#fff3c9;color:#17202a;border:1px solid #f1d36c}.rpos-total strong{color:#111;font-size:22px}
-.rpos-bottom{grid-column:1 / -1;background:#fff;padding-top:8px}.rpos-bottom button{background:#f0f2f5;color:#17202a;border:1px solid #e0e4e9}.rpos-bottom .cancel{background:#ffe7e7;color:#d22b2b}.rpos-bottom .print{background:#fff1bd}.rpos-bottom .pay{background:#e9b31b;color:#111}
-.side .brand .logo{background:linear-gradient(135deg,var(--wizo-blue),var(--wizo-green));border:0;color:#fff}
-.side .brand b{color:#fff}.side{width:245px}
-@media(max-width:1100px){.rpos-body{grid-template-columns:minmax(0,1fr) 320px!important}.rpos-cats{grid-template-columns:repeat(4,minmax(80px,1fr))}}
-@media(max-width:800px){.rpos-body{grid-template-columns:1fr!important}.rpos-menu,.rpos-order{grid-column:1}.rpos-order{order:2}.rpos-cats{grid-template-columns:repeat(3,minmax(75px,1fr))}}
-
-
-.auth-file{cursor:pointer;position:relative;transition:.15s ease}.auth-file:hover{border-color:#e0a800;background:#fffaf0}.logo-preview{margin-top:10px;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap}.logo-preview img{width:72px;height:72px;object-fit:contain;border:1px solid #ddd;border-radius:12px;background:#fff;padding:5px}.logo-remove{font-size:12px;padding:7px 10px}
 </style>
 </head>
 <body>
-<div id="login" class="login auth-reference">
-  <section class="wizo-left">
-    <div class="auth-logo"><div class="wizo-logo-mark">W</div><div><div class="wizo-wordmark"><span class="blue">WIZO</span> <span class="green">POS</span></div><div class="wizo-tagline">Smart Business <b>•</b> Better Tomorrow</div></div></div>
-    <h2 style="font-size:25px;margin:8px 0 0">Restaurant POS</h2>
-    <div class="wizo-food">🍔 🍟 🌯 🥤</div>
-    <div class="wizo-features"><div class="wizo-feature"><b>🍽</b><span>Dine In</span></div><div class="wizo-feature"><b>🛍</b><span>Takeaway</span></div><div class="wizo-feature"><b>🛵</b><span>Delivery</span></div><div class="wizo-feature"><b>▥</b><span>Reports</span></div></div>
-    <div style="margin-top:28px;font-weight:700;font-size:13px">✓ Easy to Use &nbsp;&nbsp; ⚡ Fast &amp; Simple &nbsp;&nbsp; 📊 Complete Solution</div>
-  </section>
-  <div class="auth-panel">
-   <div class="auth-card-reference" id="loginPanel">
-    <div class="auth-top"><button type="button" class="lang-btn active">EN</button><button type="button" class="lang-btn" onclick="toast('Afaan Oromoo language selected')">AO</button></div>
-    <div class="auth-logo"><div class="wizo-logo-mark">W</div><div class="wizo-wordmark"><span class="blue">WIZO</span> <span class="green">POS</span></div></div>
-    <h1 class="auth-title">Welcome to WIZO POS</h1><p class="auth-sub">Restaurant POS</p>
-    <div class="auth-field"><label>Email</label><input id="loginEmail" type="email" placeholder="Email" autocomplete="username"></div>
-    <div class="auth-field"><label>Password</label><input id="loginPass" type="password" placeholder="Password" autocomplete="current-password"></div>
-    <div class="auth-links"><label><input type="checkbox" style="width:auto;vertical-align:middle"> Remember me</label><a href="#" onclick="forgotPassword();return false">Forgot Password?</a></div>
-    <button class="auth-signin" onclick="login()">⇥ &nbsp; Sign In</button>
-    <div style="text-align:center;margin:12px 0;color:#7b8490">──────── OR ────────</div>
-    <button class="auth-secondary" onclick="showRegister()">👤＋ &nbsp; Create Account</button>
-    <div class="section-bar" style="margin-top:16px;text-align:center">🏪 Manage your restaurant easily<br><small style="font-weight:500;color:#667085">Menu • Orders • Kitchen • Sales • Reports</small></div>
+<div id="login" class="login">
+ <div class="loginbox" id="loginPanel">
+  <div class="loginbrand"><div class="logo">W</div><h1>WIZO POS</h1><p>Restaurant Point of Sale &amp; Management</p></div>
+  <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="owner@example.com" autocomplete="username"></div>
+  <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password"></div>
+  <button class="gold" onclick="login()">Sign In</button>
+  <div class="row" style="margin-top:10px"><button class="linkbtn" onclick="forgotPassword()">Forgot password?</button><button class="linkbtn" onclick="showRegister()">Create account</button></div>
+ </div>
+ <section id="supportPanel" class="loginbox hidden" aria-live="polite">
+  <div class="loginbrand"><div class="logo">W</div><h1>WIZO POS</h1><p>Restaurant Point of Sale &amp; Management</p></div>
+  <div class="notice"><b>Your subscription has expired.</b><br>Please contact WIZO POS Support to renew your subscription.</div>
+  <div class="field"><label>WhatsApp</label><a href="https://wa.me/966536690242?text=Hello%20WIZO%20POS%20Support%2C%20my%20subscription%20has%20expired.%20Please%20help%20me%20renew%20it." target="_blank" rel="noopener" style="display:block;text-align:center;background:#16834a;color:#fff;text-decoration:none;padding:12px;border-radius:9px;font-weight:600">Contact on WhatsApp</a></div>
+  <div class="field"><label>Phone</label><a href="tel:+966536690242" style="display:block;text-align:center;background:#151515;color:#fff;text-decoration:none;padding:12px;border-radius:9px;font-weight:600">Call +966536690242</a></div>
+  <div class="field"><label>Email</label><a href="mailto:Wezirumar1988@gmail.com?subject=WIZO%20POS%20subscription%20renewal&body=Hello%20WIZO%20POS%20Support%2C%20my%20subscription%20has%20expired.%20Please%20help%20me%20renew%20it." style="display:block;text-align:center;background:#f0f1f3;color:#252525;text-decoration:none;padding:12px;border-radius:9px;font-weight:600">Email WIZO POS Support</a></div>
+  <button class="linkbtn" type="button" onclick="hideSupportPanel();$('loginPanel').classList.remove('hidden')">Back to Sign In</button>
+ </section>
+ <section id="deactivatedPanel" class="loginbox hidden" aria-live="polite">
+  <div class="loginbrand"><div class="logo">W</div><h1>WIZO POS</h1><p>Restaurant Point of Sale &amp; Management</p></div>
+  <div class="notice"><b>Your account has been deactivated.</b><br>Your access is currently disabled by the administrator. Please contact WIZO POS Support to request reactivation.</div>
+  <div class="field"><label>WhatsApp</label><a href="https://wa.me/966536690242?text=Hello%20WIZO%20POS%20Support%2C%20my%20account%20has%20been%20deactivated.%20Please%20help%20me%20reactivate%20it." target="_blank" rel="noopener" style="display:block;text-align:center;background:#16834a;color:#fff;text-decoration:none;padding:12px;border-radius:9px;font-weight:600">Contact on WhatsApp</a></div>
+  <div class="field"><label>Phone</label><a href="tel:+966536690242" style="display:block;text-align:center;background:#151515;color:#fff;text-decoration:none;padding:12px;border-radius:9px;font-weight:600">Call +966536690242</a></div>
+  <div class="field"><label>Email</label><a href="mailto:Wezirumar1988@gmail.com?subject=WIZO%20POS%20account%20reactivation&body=Hello%20WIZO%20POS%20Support%2C%20my%20account%20has%20been%20deactivated.%20Please%20help%20me%20reactivate%20it." style="display:block;text-align:center;background:#f0f1f3;color:#252525;text-decoration:none;padding:12px;border-radius:9px;font-weight:600">Email WIZO POS Support</a></div>
+  <button class="linkbtn" type="button" onclick="hideDeactivatedPanel();$('loginPanel').classList.remove('hidden')">Back to Sign In</button>
+ </section>
+ <section id="registerPanel" class="registerbox hidden" aria-label="Create business account">
+  <div class="registerhead"><div class="loginbrand" style="margin:0;text-align:left"><div style="display:flex;align-items:center;gap:10px"><div class="logo">W</div><div><h1>WIZO POS</h1><p>Restaurant Point of Sale &amp; Management</p></div></div></div><button class="light" type="button" onclick="showLogin()">Back to Sign In</button></div>
+  <hr><h2 style="margin:8px 0 4px">Create your restaurant account</h2><p class="sub" style="margin-bottom:18px">Enter your restaurant and owner information to get started.</p>
+  <form id="registerForm" onsubmit="submitRegistration(event)">
+   <div class="formgrid">
+    <div class="field"><label>Restaurant name *</label><input name="businessName" required maxlength="120" placeholder="Your business name"></div>
+    <div class="field"><label>Owner full name *</label><input name="ownerName" required maxlength="120" placeholder="Full name"></div>
+    <div class="field"><label>Email *</label><input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+    <div class="field"><label>Phone</label><input name="phone" type="tel" autocomplete="tel" placeholder="Phone number"></div>
+    <div class="field"><label>Password *</label><input name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></div>
+    <div class="field"><label>Language</label><select name="language"><option>English</option><option>Afaan Oromo</option><option>العربية</option></select></div>
+    <div class="field"><label>Currency</label><select name="currency"><option value="ETB">ETB — Ethiopian Birr</option><option value="SAR">SAR — Saudi Riyal</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="AED">AED — UAE Dirham</option></select></div>
+    <div class="field"><label>Business logo (optional)</label><input name="logo" type="file" accept="image/*" style="display:block;cursor:pointer"><small class="muted">You can add or change your logo later.</small></div>
    </div>
-
-   <section id="supportPanel" class="auth-card-reference hidden" aria-live="polite">
-    <h2 class="auth-title">Subscription Support</h2>
-    <div class="notice"><b>Your subscription has expired.</b><br>Please contact WIZO POS Support to renew your subscription.</div>
-    <div class="auth-field"><label>WhatsApp</label><a href="https://wa.me/966536690242?text=Hello%20WIZO%20POS%20Support%2C%20my%20subscription%20has%20expired.%20Please%20help%20me%20renew%20it." target="_blank" rel="noopener" class="auth-secondary" style="display:block;text-align:center;text-decoration:none;background:#16834a!important;color:#fff!important">Contact on WhatsApp</a></div>
-    <div class="auth-field"><label>Phone</label><a href="tel:+966536690242" class="auth-secondary" style="display:block;text-align:center;text-decoration:none;background:#151515!important;color:#fff!important">Call +966536690242</a></div>
-    <div class="auth-field"><label>Email</label><a href="mailto:Wezirumar1988@gmail.com?subject=WIZO%20POS%20subscription%20renewal" class="auth-secondary" style="display:block;text-align:center;text-decoration:none">Email WIZO POS Support</a></div>
-    <button class="auth-secondary" type="button" onclick="hideSupportPanel();$('loginPanel').classList.remove('hidden')">← Back to Sign In</button>
-   </section>
-
-   <section id="deactivatedPanel" class="auth-card-reference hidden" aria-live="polite">
-    <h2 class="auth-title">Account Deactivated</h2>
-    <div class="notice"><b>Your account has been deactivated.</b><br>Please contact WIZO POS Support to request reactivation.</div>
-    <div class="auth-field"><label>WhatsApp</label><a href="https://wa.me/966536690242?text=Hello%20WIZO%20POS%20Support%2C%20my%20account%20has%20been%20deactivated.%20Please%20help%20me%20reactivate%20it." target="_blank" rel="noopener" class="auth-secondary" style="display:block;text-align:center;text-decoration:none;background:#16834a!important;color:#fff!important">Contact on WhatsApp</a></div>
-    <div class="auth-field"><label>Phone</label><a href="tel:+966536690242" class="auth-secondary" style="display:block;text-align:center;text-decoration:none;background:#151515!important;color:#fff!important">Call +966536690242</a></div>
-    <button class="auth-secondary" type="button" onclick="hideDeactivatedPanel();$('loginPanel').classList.remove('hidden')">← Back to Sign In</button>
-   </section>
-
-   <section id="registerPanel" class="auth-card-reference hidden" aria-label="Create business account">
-    <div class="auth-top"><button type="button" class="lang-btn active">EN</button><button type="button" class="lang-btn">AO</button></div>
-    <div class="auth-logo"><div class="wizo-logo-mark">W</div><div class="wizo-wordmark"><span class="blue">WIZO</span> <span class="green">POS</span></div></div>
-    <h1 class="auth-title">Create Account</h1><p class="auth-sub">Join WIZO POS and start managing your restaurant easily</p>
-    <form id="registerForm" onsubmit="submitRegistration(event)">
-      <div class="section-bar">🏪 Business Information</div>
-      <div class="auth-grid">
-       <div class="auth-field"><label>Business Name *</label><input name="businessName" required maxlength="120" placeholder="Enter your restaurant name"></div>
-       <div class="auth-field"><label>Business Logo</label><div class="auth-file" id="logoUploadBox" role="button" tabindex="0" aria-label="Upload business logo">🖼️ &nbsp; <span id="logoUploadText">Upload Logo</span><br><small>PNG, JPG (Max 2MB)</small><input id="businessLogoInput" name="logo" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" style="display:none"><div id="logoPreview" class="logo-preview hidden"></div></div></div>
-       <div class="auth-field"><label>Owner Name *</label><input name="ownerName" required maxlength="120" placeholder="Enter owner name"></div>
-       <div class="auth-field"><label>Address</label><input name="address" placeholder="Enter your address"></div>
-       <div class="auth-field"><label>Phone Number *</label><input name="phone" type="tel" required placeholder="+251 9XX XXX XXX"></div>
-       <div class="auth-field"><label>Currency *</label><select name="currency"><option value="ETB">ETB - Ethiopian Birr</option><option value="SAR">SAR - Saudi Riyal</option><option value="USD">USD - US Dollar</option><option value="AED">AED - UAE Dirham</option><option value="EUR">EUR - Euro</option></select></div>
-      </div>
-      <div class="section-bar green">👤 Account Information</div>
-      <div class="auth-grid">
-       <div class="auth-field"><label>Email Address *</label><input name="email" type="email" required autocomplete="email" placeholder="Enter your email"></div>
-       <div class="auth-field"><label>Password *</label><input name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="Create a password"></div>
-       <div class="auth-field"><label>Confirm Password *</label><input name="confirmPassword" type="password" required minlength="8" placeholder="Confirm your password"></div>
-       <div class="auth-field"><label>Language *</label><select name="language"><option>English</option><option>Afaan Oromoo</option><option>العربية</option></select></div>
-      </div>
-      <label style="display:block;margin:13px 0;font-size:13px"><input type="checkbox" required style="width:auto;vertical-align:middle"> I agree to the <a href="#" onclick="return false">Terms and Conditions</a> and <a href="#" onclick="return false">Privacy Policy</a></label>
-      <button class="auth-primary" type="submit">👤＋ &nbsp; Create Account</button>
-      <div style="text-align:center;margin:12px 0;color:#7b8490">──────── OR ────────</div>
-      <button class="auth-secondary" type="button" onclick="showLogin()">← &nbsp; Back to Sign In</button>
-    </form>
-   </section>
-  </div>
+   <p class="small muted">A 15-day free trial starts automatically when your restaurant account is created.</p>
+   <div class="row" style="justify-content:flex-end;flex-wrap:wrap"><button class="light" type="button" onclick="showLogin()">Cancel</button><button class="gold" type="submit">Create Account</button></div>
+  </form>
+ </section>
 </div>
 <div id="app" class="app hidden">
  <aside class="side">
-  <div class="brand"><div class="wizo-logo-mark" style="width:44px;height:44px;font-size:25px;border-radius:13px">W</div><div><b>WIZO POS</b><small>Restaurant POS</small></div></div>
+  <div class="brand"><div class="logo">W</div><div><b>WIZO POS</b><small>Restaurant Management</small></div></div>
   <div class="nav" id="nav">
    <button class="active" data-page="dashboard">▦ &nbsp; Restaurant Dashboard</button>
    <button data-page="pos">▣ &nbsp; Restaurant POS</button>
@@ -242,11 +139,10 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif}
  </main>
 </div>
 <div id="modalRoot"></div><div id="toastRoot"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">document.addEventListener('DOMContentLoaded',initBusinessLogoUpload);
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL="https://rkdowbgbwsyhmlzfiynl.supabase.co";
-const SUPABASE_ANON_KEY="sb_publishable_RguZsGx7_dt-p3vvZ3BZbA_U563nFWp";
+const SUPABASE_URL="https://oyaffxmkozoeaxkzwqwg.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_L-o0onswd0_nre7zKD_ctQ_udpgdb89";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const $=id=>document.getElementById(id);
 const currencies={ETB:'ETB — Ethiopian Birr',SAR:'SAR — Saudi Riyal',USD:'USD — US Dollar',EUR:'EUR — Euro',AED:'AED — UAE Dirham'};
@@ -345,35 +241,10 @@ function confirmText(message){
  const key=lang==='Afaan Oromoo'||lang==='Afaan Oromo'?'om':lang==='العربية'?'ar':'en';return m[key];
 }
 function appConfirm(message){return new Promise(resolve=>{const yes=lang==='Afaan Oromoo'||lang==='Afaan Oromo'?'Eeyyee':lang==='العربية'?'نعم':'OK';const no=lang==='Afaan Oromoo'||lang==='Afaan Oromo'?'Lakki':lang==='العربية'?'إلغاء':'Cancel';const rtl=lang==='العربية'?' dir="rtl"':'';$('modalRoot').innerHTML=`<div class="modalback"${rtl}><div class="modal" role="dialog" aria-modal="true"><div class="modalhead"><h2>${lang==='العربية'?'تأكيد':lang==='Afaan Oromoo'||lang==='Afaan Oromo'?'Mirkaneessi':'Confirm'}</h2><button class="light" type="button" id="confirmClose">✕</button></div><p>${confirmText(message)}</p><div class="row" style="justify-content:flex-end"><button class="light" type="button" id="confirmNo">${no}</button><button class="gold" type="button" id="confirmYes">${yes}</button></div></div></div>`;const finish=v=>{$('modalRoot').innerHTML='';resolve(v)};$('confirmClose').onclick=()=>finish(false);$('confirmNo').onclick=()=>finish(false);$('confirmYes').onclick=()=>finish(true);});}
-function showRegister(){$('loginPanel').classList.add('hidden');$('registerPanel').classList.remove('hidden');initBusinessLogoUpload()}
+function showRegister(){$('loginPanel').classList.add('hidden');$('registerPanel').classList.remove('hidden')}
 function showLogin(){$('registerPanel').classList.add('hidden');$('loginPanel').classList.remove('hidden')}
-function initBusinessLogoUpload(){
- const box=$('logoUploadBox'),input=$('businessLogoInput');
- if(!box||!input||box.dataset.ready==='1')return;
- box.dataset.ready='1';
- const open=()=>input.click();
- box.addEventListener('click',e=>{if(e.target!==input)open()});
- box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
- input.addEventListener('change',()=>{
-   const file=input.files&&input.files[0];
-   if(!file)return;
-   if(file.size>2*1024*1024){toast('Logo must be 2MB or smaller.');input.value='';return;}
-   if(!/^image\/(png|jpeg|jpg|webp)$/.test(file.type)){toast('Please choose a PNG, JPG or WEBP image.');input.value='';return;}
-   const reader=new FileReader();
-   reader.onload=()=>{
-     const preview=$('logoPreview');
-     preview.classList.remove('hidden');
-     preview.innerHTML=`<img src="${reader.result}" alt="Business logo preview"><button type="button" class="light logo-remove" aria-label="Remove logo">Remove</button>`;
-     $('logoUploadText').textContent='Change Logo';
-     preview.querySelector('.logo-remove').onclick=(ev)=>{ev.stopPropagation();input.value='';preview.classList.add('hidden');preview.innerHTML='';$('logoUploadText').textContent='Upload Logo';};
-   };
-   reader.readAsDataURL(file);
- });
-}
 async function submitRegistration(e){
  e.preventDefault();const form=e.target,btn=form.querySelector('button[type=submit]'),f=new FormData(form);
- const p=String(f.get('password')||''), cp=String(f.get('confirmPassword')||'');
- if(cp && p!==cp){toast('Passwords do not match.');return false;}
  const businessName=String(f.get('businessName')||'').trim(),ownerName=String(f.get('ownerName')||'').trim(),email=String(f.get('email')||'').trim().toLowerCase(),password=String(f.get('password')||'');
  const phone=String(f.get('phone')||'').trim(),country=String(f.get('country')||'').trim(),language=String(f.get('language')||'English'),regCurrency=String(f.get('currency')||'ETB');
  if(!businessName||!ownerName||!email||password.length<8){toast('Complete required fields. Password must be at least 8 characters.');return} btn.disabled=true;btn.textContent='Creating restaurant…';
