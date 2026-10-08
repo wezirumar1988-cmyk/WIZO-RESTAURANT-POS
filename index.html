@@ -899,12 +899,21 @@ function renderRestaurantMenu(){
   $('rposItems').innerHTML=items.map(m=>{
    const id=String(m.id);
    const price=Number(m.price)||0;
-   return `<button type="button" class="rpos-item rpos-food-card" onclick="addMenuCart(${JSON.stringify(id)})">
+   return `<button type="button" class="rpos-item rpos-food-card" data-menu-id="${id.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">
     <span class="rpos-food-image">${m.image?`<img src="${String(m.image).replace(/"/g,'&quot;')}" alt="${String(m.name||'').replace(/"/g,'&quot;')}">`:`<span class="ico">${menuEmoji(m.category)}</span>`}</span>
     <span class="rpos-food-name"><b>${m.name||'Unnamed item'}</b><small>${m.category||'Food'}</small></span>
     <strong>${money(price)}</strong>
    </button>`;
   }).join('')||'<div class="rpos-empty">No menu item found.</div>';
+  // Attach the click handler directly. This is more reliable on touchscreen/Chrome
+  // than relying only on inline onclick handlers.
+  $('rposItems').querySelectorAll('[data-menu-id]').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      addMenuCart(btn.getAttribute('data-menu-id'));
+    });
+  });
  }
  updateRestaurantSelection();
 }
@@ -961,6 +970,9 @@ function addMenuCart(id){
  if(x){x.qty=Number(x.qty||0)+1;}else{cart.push({id:menuId,name:m.name,price:Number(m.price)||0,cost:Number(m.cost)||0,qty:1,menu:true});}
  selectedRestaurantId=menuId;
  updateRestaurantSelection();
+ // Re-render the order area immediately so the selected item is visible.
+ if($('rposLines'))$('rposLines').innerHTML=restaurantCartRows();
+ if($('cartTotal'))$('cartTotal').textContent=money(cart.reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||0),0));
 }
 async function checkoutRestaurant(){
  if(!cart.length)return toast('Add food or drinks first');
