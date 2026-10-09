@@ -931,37 +931,6 @@ function changeQty(id,n){let x=cart.find(x=>x.id===id);if(!x)return;let p=db.pro
 function checkout(){if(!cart.length)return toast('Add products first');for(let x of cart){let p=db.products.find(p=>p.id===x.id);if(p.qty<x.qty)return toast('Not enough stock: '+p.name)}let total=cart.reduce((a,x)=>a+x.price*x.qty,0),cost=cart.reduce((a,x)=>a+x.cost*x.qty,0);cart.forEach(x=>db.products.find(p=>p.id===x.id).qty-=x.qty);const sale={invoice:activeInvoiceNo,date:new Date().toISOString().slice(0,10),customer:$('posCustomer').value,payment:$('payment').value,total,cost,items:cart.map(x=>({id:x.id,name:x.name,qty:x.qty,price:x.price}))};db.sales.push(sale);save();cart=[];activeInvoiceNo=newInvoiceNo();toast('Sale completed');render();printSale(sale)}
 function printSaleByInvoice(invoice){const sale=db.sales.find(x=>x.invoice===invoice);if(sale)printSale(sale)}
 function printSale(sale){const rows=(sale.items||[]).map(i=>{const m=db.menu.find(x=>String(x.id)===String(i.id));const p=db.products.find(p=>p.id===i.id);const name=i.name||(m&&m.name)||(p&&p.name)||'Item';const price=(i.price!==undefined&&i.price!==null)?i.price:((m&&m.price)||(p&&p.price)||0);const cat=(m&&m.category)||'';return `<tr><td><b>${name}</b>${cat?`<div style="font-size:10px;color:#777">${cat}</div>`:''}</td><td>${i.qty}</td><td>${money(price)}</td><td>${money(price*i.qty)}</td>`}).join('');const w=window.open('','_blank','width=420,height=650');if(!w){toast('Allow pop-ups to print the receipt');return}w.document.write(`<!doctype html><html><head><title>Receipt ${sale.invoice}</title><style>body{font:13px Arial,sans-serif;padding:18px;color:#111}h2,p{text-align:center;margin:4px}table{width:100%;border-collapse:collapse;margin:18px 0}th,td{padding:7px 3px;border-bottom:1px solid #ddd;text-align:left}th{font-size:11px}.total{font-weight:bold;font-size:17px;text-align:right;margin-top:12px}.meta{margin-top:16px} @media print{button{display:none}}
-/* WIZO Restaurant POS — compact touchscreen sizing */
-.rpos{max-width:1180px;margin:0 auto;padding:10px;border-radius:13px}
-.rpos-top{gap:9px;margin-bottom:9px}
-.rpos-logo{width:36px;height:36px;border-radius:9px;font-size:16px}
-.rpos-brand b{font-size:16px}
-.rpos-mode{min-width:100px;padding:8px 11px}
-.rpos-tools{gap:6px}
-.rpos-body{grid-template-columns:330px 1fr;gap:9px;min-height:520px}
-.rpos-order-head{padding:9px 11px}
-.rpos-lines{padding:2px 8px}
-.rpos-line{grid-template-columns:1fr 65px 75px 25px;gap:5px;padding:8px 3px}
-.rpos-controls{padding:8px}
-.rpos-total{margin-top:7px;padding:10px;font-size:17px}
-.rpos-menu{padding:8px}
-.rpos-cats{gap:5px;margin-bottom:7px}
-.rpos-cat{padding:9px 6px;font-size:12px}
-.rpos-items{gap:6px}
-.rpos-item{min-height:82px;padding:6px}
-.rpos-item .ico{font-size:25px;margin-bottom:2px}
-.rpos-item b{font-size:12px}
-.rpos-item strong{font-size:12px;margin-top:2px}
-.rpos-bottom{gap:5px;margin-top:7px}
-.rpos-bottom button{padding:9px 6px;font-size:12px}
-@media(max-width:1200px){
-  .rpos-body{grid-template-columns:300px 1fr;min-height:500px}
-  .rpos-items{grid-template-columns:repeat(3,minmax(105px,1fr))}
-}
-@media(max-width:900px){
-  .rpos-body{grid-template-columns:1fr;min-height:auto}
-}
-
 </style></head><body><h2>${businessName||'WIZO Restaurant'}</h2><p>Sales Receipt</p><hr><div class="meta">Invoice No.: <b>${sale.invoice}</b><br>Date: ${sale.date}<br>Customer: ${sale.customer||'Walk-in customer'}<br>Payment: ${sale.payment}</div><table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table><div class="total">Grand Total: ${money(sale.total)}</div><p style="margin-top:24px">Thank you!</p></body></html>`);w.document.close();setTimeout(()=>w.print(),250)}
 function purchaseModal(){openModal('New purchase',`<div class="field"><label>Product</label><select name="product">${db.products.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>${field('Quantity','qty','0','number')}${field('Unit cost ('+currency+')','cost','0','number')}${field('Transport / handling ('+currency+')','extra','0','number')}${field('Date','date','','date',new Date().toISOString().slice(0,10))}`,'Save purchase',f=>{let p=db.products.find(p=>p.id==f.get('product')),q=+f.get('qty'),c=+f.get('cost');if(!p||q<=0)return toast('Enter a valid quantity');p.qty+=q;p.cost=c+(+f.get('extra')||0)/q;db.purchases.push({id:Date.now()+2,productId:p.id,name:p.name,qty:q,cost:p.cost,date:f.get('date')});save();toast('Purchase saved and stock updated')})}
 
