@@ -494,6 +494,7 @@ const SUPABASE_URL="https://oyaffxmkozoeaxkzwqwg.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_Rgkd70EMySEhdSkkDoMOzA_Tnez6L8E";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const $=id=>document.getElementById(id);
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 const currencies={ETB:'ETB — Ethiopian Birr',SAR:'SAR — Saudi Riyal',USD:'USD — US Dollar',EUR:'EUR — Euro',AED:'AED — UAE Dirham'};
 let currency=localStorage.getItem('wizo_currency')||'ETB';
 let businessName=localStorage.getItem('wizo_business_name')||'WIZO Restaurant';
@@ -869,55 +870,62 @@ function filterTable(){let q=$('search').value.toLowerCase();$('productTable').i
 function productButtons(){return db.products.map(p=>`<button class="light" style="text-align:left;color:#222" onclick="addCart(${p.id})"><b>${p.name}</b><br><small class="muted">${money(p.price)} · stock ${p.qty}</small></button>`).join('')}
 function renderProducts(){let q=$('posSearch').value.toLowerCase();$('posProducts').innerHTML=db.products.filter(p=>p.name.toLowerCase().includes(q)||(p.sku||'').toLowerCase().includes(q)).map(p=>`<button class="light" style="text-align:left;color:#222" onclick="addCart(${p.id})"><b>${p.name}</b><br><small class="muted">${money(p.price)} · stock ${p.qty}</small></button>`).join('')}
 let selectedRestaurantId=null;let restaurantCategory='All';
-function restaurantCartRows(){if(!cart.length)return '<div class="rpos-empty">No items yet.<br>Tap a menu item to add it.</div>';return cart.map(x=>`<div class="rpos-line" onclick="selectedRestaurantId=${JSON.stringify(String(x.id))};updateRestaurantSelection()"><div><b>${x.name}</b><small>${money(x.price)} each</small></div><b>${x.qty}</b><b>${money(x.price*x.qty)}</b><button class="danger" onclick="event.stopPropagation();removeCartItem(${JSON.stringify(String(x.id))})">×</button></div>`).join('')}
+function restaurantCartRows(){if(!cart.length)return '<div class="rpos-empty">No items yet.<br>Tap a menu item to add it.</div>';return cart.map(x=>`<div class="rpos-line" onclick="selectedRestaurantId=${JSON.stringify(String(x.id))};updateRestaurantSelection()"><div><b>${escapeHtml(x.name)}</b><small>${money(x.price)} each</small></div><b>${x.qty}</b><b>${money(x.price*x.qty)}</b><button type="button" class="danger" aria-label="Remove item" onclick="event.stopPropagation();removeCartItem(${JSON.stringify(String(x.id))})">×</button></div>`).join('')}
 function restaurantCategories(){let cats=['All',...new Set(db.menu.map(m=>m.category||'Food'))];return cats.map(c=>`<button class="rpos-cat ${restaurantCategory===c?'active':''}" onclick="restaurantCategory='${String(c).replace(/'/g,"\\'")}';renderRestaurantMenu()">${c}<small>${c==='All'?'Everything':'Menu'}</small></button>`).join('')}
 function renderRestaurantMenu(){let q=($('posSearch')?.value||'').toLowerCase();let items=db.menu.filter(m=>m.available!==false&&(!q||m.name.toLowerCase().includes(q))&&(restaurantCategory==='All'||(m.category||'Food')===restaurantCategory));if($('rposCats'))$('rposCats').innerHTML=restaurantCategories();if($('rposItems'))$('rposItems').innerHTML=items.map(m=>`<button class="rpos-item rpos-food-card" onclick="addMenuCart(${JSON.stringify(String(m.id))});selectedRestaurantId=${JSON.stringify(String(m.id))};updateRestaurantSelection()"><span class="rpos-food-image">${m.image?`<img src="${m.image}" alt="${m.name}">`:`<span class="ico">${menuEmoji(m.category)}</span>`}</span><span class="rpos-food-name"><b>${m.name}</b><small>${m.category||'Food'}</small></span><strong>${money(m.price)}</strong></button>`).join('')||'<div class="rpos-empty">No menu item found.</div>';updateRestaurantSelection()}
 function menuEmoji(c){c=String(c||'').toLowerCase();if(c.includes('drink'))return '🥤';if(c.includes('coffee'))return '☕';if(c.includes('dessert'))return '🍰';if(c.includes('break'))return '🍳';if(c.includes('snack'))return '🍟';return '🍽️'}
-function updateRestaurantSelection(){let x=cart.find(i=>i.id===selectedRestaurantId);if($('selectedQty'))$('selectedQty').textContent=x?x.qty:1;if($('rposLines'))$('rposLines').innerHTML=restaurantCartRows();if($('cartTotal'))$('cartTotal').textContent=money(cart.reduce((a,x)=>a+x.price*x.qty,0))}
+function updateRestaurantSelection(){let x=cart.find(i=>String(i.id)===String(selectedRestaurantId));if($('selectedQty'))$('selectedQty').textContent=x?x.qty:0;if($('rposLines'))$('rposLines').innerHTML=restaurantCartRows();if($('cartTotal'))$('cartTotal').textContent=money(cart.reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||0),0));if($('currentInvoiceNo'))$('currentInvoiceNo').textContent=activeInvoiceNo}
 function setOrderType(type){let ids={"Dine-in":"modeDine",Takeaway:"modeTake",Delivery:"modeDelivery"};Object.values(ids).forEach(id=>$(id)?.classList.remove('active'));$(ids[type])?.classList.add('active');if($('orderTable'))$('orderTable').value=type==='Dine-in'?'Table 1':type}
-function changeRestaurantQty(n){let x=cart.find(i=>i.id===selectedRestaurantId);if(!x)return toast('Select an item first');if(n>0)x.qty+=1;else{x.qty-=1;if(x.qty<=0)cart=cart.filter(i=>i.id!==selectedRestaurantId)}updateRestaurantSelection()}
-function removeSelectedRestaurantItem(){if(selectedRestaurantId===null)return;cart=cart.filter(i=>i.id!==selectedRestaurantId);selectedRestaurantId=null;updateRestaurantSelection()}
+function changeRestaurantQty(n){let x=cart.find(i=>String(i.id)===String(selectedRestaurantId));if(!x)return toast('Select an item first');if(n>0)x.qty=Number(x.qty||0)+1;else{x.qty=Number(x.qty||0)-1;if(x.qty<=0){cart=cart.filter(i=>String(i.id)!==String(selectedRestaurantId));selectedRestaurantId=cart.length?String(cart[cart.length-1].id):null}}updateRestaurantSelection()}
+function removeSelectedRestaurantItem(){if(selectedRestaurantId===null||!cart.some(i=>String(i.id)===String(selectedRestaurantId)))return toast('Select an item first');cart=cart.filter(i=>String(i.id)!==String(selectedRestaurantId));selectedRestaurantId=cart.length?String(cart[cart.length-1].id):null;updateRestaurantSelection()}
 function voidSelectedRestaurantItem(){removeSelectedRestaurantItem()}
 function clearRestaurantCart(){cart=[];selectedRestaurantId=null;activeInvoiceNo=newInvoiceNo();render();setTimeout(renderRestaurantMenu,0)}
 function applyRestaurantDiscount(){toast('Discount can be applied after selecting an order item.')}
 function printCurrentRestaurantBill(){if(!cart.length)return toast('Add items first');let total=cart.reduce((a,x)=>a+x.price*x.qty,0);printSale({invoice:activeInvoiceNo,date:new Date().toISOString().slice(0,10),customer:$('posCustomer')?.value||'',payment:$('payment')?.value||'Cash',total,cost:cart.reduce((a,x)=>a+x.cost*x.qty,0),items:cart.map(x=>({id:x.id,name:x.name,qty:x.qty,price:x.price}))})}
 function menuButtons(){return db.menu.filter(m=>m.available!==false).map(m=>`<button class="light" style="text-align:left;color:#222" onclick="addMenuCart(${JSON.stringify(String(m.id))})"><b>${m.name}</b><br><small class="muted">${money(m.price)} · ${m.category||'Food'}</small></button>`).join('')||'<div class="empty">Add menu items first.</div>'}
 function renderMenuProducts(){let q=($('posSearch')?.value||'').toLowerCase();$('posProducts').innerHTML=db.menu.filter(m=>m.available!==false&&m.name.toLowerCase().includes(q)).map(m=>`<button class="light" style="text-align:left;color:#222" onclick="addMenuCart(${JSON.stringify(String(m.id))})"><b>${m.name}</b><br><small class="muted">${money(m.price)} · ${m.category||'Food'}</small></button>`).join('')||'<div class="empty">No menu item found.</div>'}
-function addMenuCart(id){let m=db.menu.find(x=>String(x.id)===String(id)&&x.available!==false);if(!m)return toast('Menu item unavailable');let x=cart.find(x=>String(x.id)===String(id));if(x)x.qty++;else cart.push({id:m.id,name:m.name,price:Number(m.price)||0,cost:Number(m.cost)||0,qty:1,menu:true});selectedRestaurantId=id;updateRestaurantSelection()}
+function addMenuCart(id){let m=db.menu.find(x=>String(x.id)===String(id)&&x.available!==false);if(!m)return toast('Menu item unavailable');let x=cart.find(x=>String(x.id)===String(id)&&x.menu);if(x)x.qty=Number(x.qty||0)+1;else cart.push({id:m.id,name:m.name,price:Number(m.price)||0,cost:Number(m.cost)||0,qty:1,menu:true});selectedRestaurantId=String(m.id);updateRestaurantSelection()}
+let restaurantCheckoutBusy=false;
 async function checkoutRestaurant(){
+ if(restaurantCheckoutBusy)return;
  if(!cart.length)return toast('Add food or drinks first');
- // Always create the invoice number at the moment of payment, from the latest saved sales list.
- const invoice=newInvoiceNo();
- const items=cart.map(x=>({id:String(x.id),name:x.name,qty:Number(x.qty)||0,price:Number(x.price)||0,cost:Number(x.cost)||0}));
+ const items=cart.map(x=>({id:String(x.id),name:String(x.name||'Item'),qty:Number(x.qty)||0,price:Number(x.price)||0,cost:Number(x.cost)||0}));
+ if(items.some(x=>x.qty<=0||!Number.isFinite(x.qty)||x.price<0||!Number.isFinite(x.price)))return toast('Check item quantities and prices');
  const total=items.reduce((a,x)=>a+x.price*x.qty,0);
  const cost=items.reduce((a,x)=>a+x.cost*x.qty,0);
- const type=$('orderType')?.value||'Dine-in';
+ const mode=document.querySelector('.rpos-mode.active')?.id;
+ const type=mode==='modeTake'?'Takeaway':mode==='modeDelivery'?'Delivery':'Dine-in';
  const table=$('orderTable')?.value||type;
- const sale={invoice,date:new Date().toISOString().slice(0,10),customer:$('posCustomer')?.value||'',payment:$('payment')?.value||'Cash',orderType:type,table,total,cost,items};
- // Keep the exact same sale object for Supabase, Sales History, Dashboard and Receipt.
+ const invoice=newInvoiceNo();
+ const sale={invoice,date:new Date().toISOString().slice(0,10),customer:$('posCustomer')?.value.trim()||'',payment:$('payment')?.value||'Cash',orderType:type,table,total,cost,items};
+ const previousSales=db.sales.slice(),previousOrders=db.orders.slice();
+ restaurantCheckoutBusy=true;
+ const payButton=document.querySelector('.rpos-bottom .pay');
+ if(payButton){payButton.disabled=true;payButton.textContent='Saving…';}
  db.sales.push(sale);
  db.orders.push({id:Date.now(),table,items:items.map(x=>`${x.qty} × ${x.name}`).join(', '),status:'Preparing',orderType:type,invoice});
  try{
-   if(!activeBusinessId)throw new Error('No active restaurant');
-   const {error:cloudError}=await supabaseClient.from('restaurant_app_data').upsert({restaurant_id:activeBusinessId,data:db,updated_at:new Date().toISOString()},{onConflict:'restaurant_id'});
-   if(cloudError)throw cloudError;
-   dataLoadedFromCloud=true;
-   localStorage.setItem('wizo_demo_db',JSON.stringify(db));
-   cart=[];
-   selectedRestaurantId=null;
-   activeInvoiceNo=newInvoiceNo();
-   toast('Sale saved successfully');
-   render();
-   printSale(sale);
+  if(!activeBusinessId)throw new Error('No active restaurant is connected to this account.');
+  const {error}=await supabaseClient.from('restaurant_app_data').upsert({restaurant_id:activeBusinessId,data:db,updated_at:new Date().toISOString()},{onConflict:'restaurant_id'});
+  if(error)throw error;
+  dataLoadedFromCloud=true;
+  localStorage.setItem('wizo_demo_db',JSON.stringify(db));
+  cart=[];selectedRestaurantId=null;activeInvoiceNo=newInvoiceNo();
+  toast('Sale saved successfully');
+  render();
+  printSale(sale);
  }catch(err){
-   db.sales=db.sales.filter(x=>x!==sale);
-   db.orders=db.orders.filter(x=>x.invoice!==invoice);
-   toast('Sale was not saved: '+(err.message||'Check Supabase connection'));
+  db.sales=previousSales;db.orders=previousOrders;
+  toast('Sale was not saved: '+(err?.message||'Check Supabase connection'));
+  updateRestaurantSelection();
+ }finally{
+  restaurantCheckoutBusy=false;
+  if(payButton&&payButton.isConnected){payButton.disabled=false;payButton.innerHTML='Pay<br>☞';}
  }
 }
 function addCart(id){let p=db.products.find(x=>x.id===id);if(!p||p.qty<=0)return toast('Out of stock');let x=cart.find(x=>x.id===id);if(x){if(x.qty>=p.qty)return toast('Not enough stock: '+p.name);x.qty++}else cart.push({id,name:p.name,price:p.price,cost:p.cost,qty:1});updateCartView()}
 function cartRows(){return cart.length?cart.map(x=>`<div class="row" style="padding:10px 0;border-bottom:1px solid #eee;gap:12px"><div style="flex:1;min-width:0"><b>${x.name}</b><div class="small muted">${money(x.price)} × ${x.qty} = ${money(x.price*x.qty)}</div></div><div class="actions"><button class="light" aria-label="Decrease quantity" onclick="changeQty(${x.id},-1)">−</button><button class="light" aria-label="Increase quantity" onclick="changeQty(${x.id},1)">＋</button><button class="danger" aria-label="Remove item" onclick="removeCartItem(${x.id})">×</button></div></div>`).join(''):'<div class="empty">Cart is empty</div>'}
-function removeCartItem(id){cart=cart.filter(x=>String(x.id)!==String(id));updateCartView()}
+function removeCartItem(id){cart=cart.filter(x=>String(x.id)!==String(id));if(String(selectedRestaurantId)===String(id))selectedRestaurantId=cart.length?String(cart[cart.length-1].id):null;if($('rposLines'))updateRestaurantSelection();else updateCartView()}
 function updateCartView(){const rows=$('cartRows'),total=$('cartTotal');if(rows)rows.innerHTML=cartRows();if(total)total.textContent=money(cart.reduce((a,x)=>a+x.price*x.qty,0))}
 function changeQty(id,n){let x=cart.find(x=>x.id===id);if(!x)return;let p=db.products.find(p=>p.id===id);if(n>0&&p&&x.qty>=p.qty)return toast('Not enough stock: '+p.name);x.qty+=n;if(x.qty<=0)cart=cart.filter(y=>y.id!==id);updateCartView()}
 function checkout(){if(!cart.length)return toast('Add products first');for(let x of cart){let p=db.products.find(p=>p.id===x.id);if(p.qty<x.qty)return toast('Not enough stock: '+p.name)}let total=cart.reduce((a,x)=>a+x.price*x.qty,0),cost=cart.reduce((a,x)=>a+x.cost*x.qty,0);cart.forEach(x=>db.products.find(p=>p.id===x.id).qty-=x.qty);const sale={invoice:activeInvoiceNo,date:new Date().toISOString().slice(0,10),customer:$('posCustomer').value,payment:$('payment').value,total,cost,items:cart.map(x=>({id:x.id,name:x.name,qty:x.qty,price:x.price}))};db.sales.push(sale);save();cart=[];activeInvoiceNo=newInvoiceNo();toast('Sale completed');render();printSale(sale)}
