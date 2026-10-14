@@ -941,8 +941,96 @@ function updateCartView(){const rows=$('cartRows'),total=$('cartTotal');if(rows)
 function changeQty(id,n){let x=cart.find(x=>x.id===id);if(!x)return;let p=db.products.find(p=>p.id===id);if(n>0&&p&&x.qty>=p.qty)return toast('Not enough stock: '+p.name);x.qty+=n;if(x.qty<=0)cart=cart.filter(y=>y.id!==id);updateCartView()}
 function checkout(){if(!cart.length)return toast('Add products first');for(let x of cart){let p=db.products.find(p=>p.id===x.id);if(p.qty<x.qty)return toast('Not enough stock: '+p.name)}let total=cart.reduce((a,x)=>a+x.price*x.qty,0),cost=cart.reduce((a,x)=>a+x.cost*x.qty,0);cart.forEach(x=>db.products.find(p=>p.id===x.id).qty-=x.qty);const sale={invoice:activeInvoiceNo,date:new Date().toISOString().slice(0,10),customer:$('posCustomer').value,payment:$('payment').value,total,cost,items:cart.map(x=>({id:x.id,name:x.name,qty:x.qty,price:x.price}))};db.sales.push(sale);save();cart=[];activeInvoiceNo=newInvoiceNo();toast('Sale completed');render();printSale(sale)}
 function printSaleByInvoice(invoice){const sale=db.sales.find(x=>x.invoice===invoice);if(sale)printSale(sale)}
-function printSale(sale){const rows=(sale.items||[]).map(i=>{const m=db.menu.find(x=>String(x.id)===String(i.id));const p=db.products.find(p=>p.id===i.id);const name=i.name||(m&&m.name)||(p&&p.name)||'Item';const price=(i.price!==undefined&&i.price!==null)?i.price:((m&&m.price)||(p&&p.price)||0);const cat=(m&&m.category)||'';return `<tr><td><b>${name}</b>${cat?`<div style="font-size:10px;color:#777">${cat}</div>`:''}</td><td>${i.qty}</td><td>${money(price)}</td><td>${money(price*i.qty)}</td>`}).join('');const w=window.open('','_blank','width=420,height=650');if(!w){toast('Allow pop-ups to print the receipt');return}w.document.write(`<!doctype html><html><head><title>Receipt ${sale.invoice}</title><style>body{font:13px Arial,sans-serif;padding:18px;color:#111}h2,p{text-align:center;margin:4px}table{width:100%;border-collapse:collapse;margin:18px 0}th,td{padding:7px 3px;border-bottom:1px solid #ddd;text-align:left}th{font-size:11px}.total{font-weight:bold;font-size:17px;text-align:right;margin-top:12px}.meta{margin-top:16px} @media print{button{display:none}}
-</style></head><body><h2>${businessName||'WIZO Restaurant'}</h2><p>Sales Receipt</p><hr><div class="meta">Invoice No.: <b>${sale.invoice}</b><br>Date: ${sale.date}<br>Customer: ${sale.customer||'Walk-in customer'}<br>Payment: ${sale.payment}</div><table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table><div class="total">Grand Total: ${money(sale.total)}</div><p style="margin-top:24px">Thank you!</p></body></html>`);w.document.close();setTimeout(()=>w.print(),250)}
+function receiptEscape(value){
+ return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function printSale(sale){
+ if(!sale)return toast('Receipt data not found');
+ const restaurant=activeRestaurant||{};
+ const safe=receiptEscape;
+ const restaurantName=restaurant.name||businessName||'Restaurant';
+ const ownerName=restaurant.owner_name||restaurant.ownerName||restaurant.owner||'';
+ const phone=restaurant.phone||restaurant.owner_phone||restaurant.contact_phone||'';
+ const address=restaurant.address||restaurant.location||'';
+ // Use only the restaurant owner's configured logo, never the WIZO POS app logo.
+ const rawLogo=restaurant.logo_url||restaurant.business_logo_url||restaurant.logo||'';
+ const logoUrl=/^https?:\/\//i.test(String(rawLogo))?String(rawLogo):'';
+ const items=Array.isArray(sale.items)?sale.items:[];
+ const rows=items.map(i=>{
+  const m=(db.menu||[]).find(x=>String(x.id)===String(i.id));
+  const p=(db.products||[]).find(x=>String(x.id)===String(i.id));
+  const name=i.name||(m&&m.name)||(p&&p.name)||'Item';
+  const qty=Number(i.qty)||0;
+  const price=Number(i.price??(m&&m.price)??(p&&p.price))||0;
+  return `<tr><td class="item">${safe(name)}</td><td class="qty">${qty}</td><td class="num">${safe(money(price))}</td><td class="num">${safe(money(price*qty))}</td></tr>`;
+ }).join('');
+ const total=Number(sale.total)||items.reduce((sum,i)=>sum+(Number(i.price)||0)*(Number(i.qty)||0),0);
+ const saleDate=sale.date||new Date().toISOString().slice(0,10);
+ const customer=sale.customer||'Walk-in customer';
+ const saleType=sale.orderType||'';
+ const tableName=sale.table||'';
+ const w=window.open('','_blank','width=480,height=760');
+ if(!w){toast('Allow pop-ups for this website, then press Print again');return}
+ w.document.open();
+ w.document.write(`<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Receipt ${safe(sale.invoice||'')}</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f4f6;color:#171717;font:13px Arial,Helvetica,sans-serif}
+.toolbar{max-width:420px;margin:14px auto;display:flex;gap:8px;justify-content:center}
+.toolbar button{border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;background:#b68a35;color:#fff}
+.toolbar .secondary{background:#e5e7eb;color:#222}
+.receipt{width:80mm;max-width:100%;margin:0 auto 20px;background:#fff;padding:7mm 5mm;box-shadow:0 2px 14px #0001}
+.brand{text-align:center;border-bottom:1px dashed #888;padding-bottom:12px}
+.logo{max-width:110px;max-height:65px;object-fit:contain;margin:0 auto 8px;display:block}
+h1{font-size:19px;line-height:1.2;margin:0 0 5px;overflow-wrap:anywhere}
+.business-meta{font-size:11px;line-height:1.5;color:#444}
+.kind{margin-top:8px;font-size:12px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase}
+.meta{padding:11px 0;border-bottom:1px dashed #888;line-height:1.65;font-size:11px}
+.meta div{display:flex;justify-content:space-between;gap:10px}
+.meta strong{text-align:right;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:11px}
+th{border-bottom:1px solid #222;padding:6px 2px;text-align:left;font-size:10px}
+td{padding:7px 2px;border-bottom:1px dotted #ccc;vertical-align:top}
+.qty{text-align:center;width:12%}.num{text-align:right;white-space:nowrap}.item{overflow-wrap:anywhere}
+.summary{border-top:1px dashed #888;padding-top:10px}
+.grand{display:flex;justify-content:space-between;gap:8px;font-size:16px;font-weight:800;padding:5px 0}
+.thanks{text-align:center;border-top:1px dashed #888;margin-top:12px;padding-top:12px;line-height:1.5}
+.small{font-size:10px;color:#555}
+@page{size:80mm auto;margin:3mm}
+@media print{body{background:#fff}.toolbar{display:none}.receipt{width:100%;max-width:none;margin:0;padding:0;box-shadow:none}.no-print{display:none}}
+</style></head><body>
+<div class="toolbar"><button onclick="window.print()">Print receipt</button><button class="secondary" onclick="window.close()">Close</button></div>
+<main class="receipt">
+<header class="brand">
+${logoUrl?`<img class="logo" src="${safe(logoUrl)}" alt="Restaurant logo" onerror="this.style.display='none'">`:''}
+<h1>${safe(restaurantName)}</h1>
+${ownerName?`<div class="business-meta">Owner: ${safe(ownerName)}</div>`:''}
+${phone?`<div class="business-meta">Tel: ${safe(phone)}</div>`:''}
+${address?`<div class="business-meta">${safe(address)}</div>`:''}
+<div class="kind">Sales Receipt</div>
+</header>
+<section class="meta">
+<div><span>Invoice</span><strong>${safe(sale.invoice||'—')}</strong></div>
+<div><span>Date</span><strong>${safe(saleDate)}</strong></div>
+<div><span>Customer</span><strong>${safe(customer)}</strong></div>
+<div><span>Payment</span><strong>${safe(sale.payment||'Cash')}</strong></div>
+${saleType?`<div><span>Order type</span><strong>${safe(saleType)}</strong></div>`:''}
+${tableName?`<div><span>Table / Type</span><strong>${safe(tableName)}</strong></div>`:''}
+</section>
+<table><thead><tr><th>Item</th><th class="qty">Qty</th><th class="num">Price</th><th class="num">Amount</th></tr></thead>
+<tbody>${rows||'<tr><td colspan="4">No items recorded</td></tr>'}</tbody></table>
+<section class="summary">
+<div class="grand"><span>GRAND TOTAL</span><span>${safe(money(total))}</span></div>
+</section>
+<footer class="thanks"><strong>Thank you for visiting!</strong><br><span class="small">${safe(restaurantName)}</span><br><span class="small">Please keep this receipt for your records.</span></footer>
+</main>
+<script>
+window.addEventListener('load',()=>{setTimeout(()=>window.print(),350)});
+<\/script>
+</body></html>`);
+ w.document.close();
+}
 function purchaseModal(){openModal('New purchase',`<div class="field"><label>Product</label><select name="product">${db.products.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>${field('Quantity','qty','0','number')}${field('Unit cost ('+currency+')','cost','0','number')}${field('Transport / handling ('+currency+')','extra','0','number')}${field('Date','date','','date',new Date().toISOString().slice(0,10))}`,'Save purchase',f=>{let p=db.products.find(p=>p.id==f.get('product')),q=+f.get('qty'),c=+f.get('cost');if(!p||q<=0)return toast('Enter a valid quantity');p.qty+=q;p.cost=c+(+f.get('extra')||0)/q;db.purchases.push({id:Date.now()+2,productId:p.id,name:p.name,qty:q,cost:p.cost,date:f.get('date')});save();toast('Purchase saved and stock updated')})}
 
 function editSale(invoice){let x=db.sales.find(s=>s.invoice===invoice);if(!x)return;openModal('Edit sale',field('Customer','customer','', 'text',x.customer||'')+`<div class="field"><label>Payment method</label><select name="payment">${['Cash','Card','Mobile money','Credit'].map(v=>`<option ${x.payment===v?'selected':''}>${v}</option>`).join('')}</select></div>`,'Save changes',f=>{x.customer=f.get('customer');x.payment=f.get('payment');save()})}
