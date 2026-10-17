@@ -775,8 +775,28 @@ async function loadOwnerSubscriptionStatus(){const el=$('ownerSubscriptionStatus
 async function loadSubscriptionRequests(){if(!isWizoAdmin)return toast('Access denied');const status=$('subscriptionRequestsStatus'),tableEl=$('subscriptionRequestsTable');if(!status||!tableEl)return;status.textContent='Loading subscription requests…';tableEl.innerHTML='';try{const {data,error}=await supabaseClient.from('subscription_requests').select('id,business_id,owner_user_id,plan_name,amount,payment_method,payment_reference,proof_url,status,requested_at,reviewed_at,reviewed_by,admin_notes').order('requested_at',{ascending:false});if(error)throw error;const requests=data||[],ids=[...new Set(requests.map(r=>r.business_id).filter(Boolean))];let businesses=[];if(ids.length){const q=await supabaseClient.from('businesses').select('id,business_name,owner_name,email,phone,currency').in('id',ids);if(q.error)throw q.error;businesses=q.data||[];}const byId=Object.fromEntries(businesses.map(b=>[b.id,b]));const esc=v=>String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));tableEl.innerHTML=table(['Business / owner','Plan','Amount paid','Payment','Reference / proof','Requested','Status','Actions'],requests.map(r=>{const b=byId[r.business_id]||{},pending=String(r.status||'').toLowerCase()==='pending';const proof=r.proof_url?`<a href="${esc(r.proof_url)}" target="_blank" rel="noopener">Open proof</a>`:'—';return `<tr><td>${esc(b.business_name||b.owner_name||r.business_id)}<br><small>${esc(b.email||r.owner_user_id)}</small></td><td>${esc(r.plan_name||'yearly')}</td><td>${esc(b.currency||currency)} ${Number(r.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${esc(r.payment_method||'—')}</td><td>${esc(r.payment_reference||'—')}<br>${proof}</td><td>${esc(r.requested_at?new Date(r.requested_at).toLocaleString():'—')}</td><td><span class="tag ${pending?'warn':String(r.status).toLowerCase()==='approved'?'':'bad'}">${esc(r.status)}</span>${r.admin_notes?`<br><small>${esc(r.admin_notes)}</small>`:''}</td><td>${pending?`<div class="actions"><button class="gold" onclick="reviewSubscriptionRequest('${r.id}','approve')">Approve yearly</button><button class="danger" onclick="reviewSubscriptionRequest('${r.id}','reject')">Reject</button></div>`:'—'}</td></tr>`}).join(''));status.textContent=`${requests.length} subscription request(s) loaded.`;}catch(err){status.textContent='Could not load subscription requests: '+(err.message||String(err));}}
 async function reviewSubscriptionRequest(id,decision){if(!isWizoAdmin)return toast('Access denied');const note=prompt(decision==='approve'?'Optional approval note:':'Reason for rejection (optional):','')||'';if(decision==='approve'&&!await appConfirm('Approve this payment and activate the yearly subscription for 12 months?'))return;if(decision==='reject'&&!await appConfirm('Reject this subscription request?'))return;try{const {data,error}=await supabaseClient.rpc('admin_review_subscription_request',{p_request_id:id,p_decision:decision,p_admin_notes:note});if(error)throw error;if(data?.error)throw new Error(data.error);toast(decision==='approve'?'Yearly subscription approved and activated.':'Subscription request rejected.');await loadSubscriptionRequests();await loadAdminBusinesses();}catch(err){toast('Review failed: '+(err.message||String(err))+' · Check that the subscription approval SQL has been run.');}}
 function subscriptionBlocked(){
- if(isWizoAdmin||!activeSubscription)return false; const status=String(activeSubscription.status||'').toLowerCase(); const end=activeSubscription.ends_at?new Date(activeSubscription.ends_at):null; const trialEnd=activeRestaurant?.trial_ends_at?new Date(activeRestaurant.trial_ends_at):null;
- if(status==='active')return false; if(status==='trial'&&trialEnd&&trialEnd>new Date())return false; return ['expired','cancelled','suspended'].includes(status)||(trialEnd&&trialEnd<=new Date());
+ // Keep the WIZO Super Admin exempt from restaurant subscription checks.
+ if(isWizoAdmin)return false;
+ const status=String(activeSubscription?.status||'').trim().toLowerCase();
+ const now=Date.now();
+ const restaurantTrialEnd=activeRestaurant?.trial_ends_at?new Date(activeRestaurant.trial_ends_at).getTime():NaN;
+ const subscriptionEnd=activeSubscription?.ends_at?new Date(activeSubscription.ends_at).getTime():NaN;
+ const validTime=value=>Number.isFinite(value);
+ // A trial is allowed only while its recorded end date is still in the future.
+ if(status==='trial'){
+  const trialEnd=validTime(restaurantTrialEnd)?restaurantTrialEnd:subscriptionEnd;
+  return !validTime(trialEnd)||trialEnd<=now;
+ }
+ // A paid/active subscription must also have a future end date; status alone is not enough.
+ if(status==='active'){
+  return !validTime(subscriptionEnd)||subscriptionEnd<=now;
+ }
+ // If the subscription row is missing, allow only a still-valid trial recorded on the restaurant.
+ if(!activeSubscription){
+  return !validTime(restaurantTrialEnd)||restaurantTrialEnd<=now;
+ }
+ // Expired, cancelled, suspended, pending, or unknown statuses cannot access the app.
+ return true;
 }
 function subscriptionNotice(){
  if(isWizoAdmin||!activeRestaurant)return ''; const end=activeSubscription?.ends_at||activeRestaurant.trial_ends_at; const status=activeSubscription?.status||'trial';
