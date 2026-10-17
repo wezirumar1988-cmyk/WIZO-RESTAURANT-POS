@@ -393,6 +393,22 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif}
   .rpos-bottom .pay{font-size:13px;}
 }
 </style>
+<style id="wizo-laptop-page-scroll-fix">
+/* Fix: allow the laptop page and long settings/admin pages to scroll vertically. */
+@media (min-width: 901px) {
+  html { min-height: 100%; height: auto; overflow-y: auto; }
+  body { min-height: 100vh; height: auto; overflow-x: hidden; overflow-y: auto !important; }
+  .app { min-height: 100vh; height: auto !important; overflow: visible !important; align-items: stretch; }
+  .side { position: sticky; top: 0; align-self: flex-start; height: 100vh; max-height: 100vh; overflow-y: auto !important; overflow-x: hidden; }
+  .main { min-height: 100vh; height: auto !important; overflow: visible !important; }
+  .top { position: sticky; top: 0; }
+  .content { height: auto !important; min-height: calc(100vh - 48px); overflow: visible !important; }
+  .rpos { height: auto !important; min-height: calc(100vh - 68px); overflow: visible !important; }
+  .rpos-body { min-height: 500px; overflow: visible !important; }
+  .rpos-menu { overflow: visible !important; }
+  .rpos-items { overflow: visible !important; }
+}
+</style>
 </head>
 <body>
 <div id="login" class="login auth-reference">
